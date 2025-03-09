@@ -73,20 +73,31 @@ The test client will:
 
 ### 2. Manual Testing with JSON-RPC
 
-You can also test the MCP server by manually sending JSON-RPC requests to it:
+You can also test the MCP server by manually sending JSON-RPC requests to it using standard input/output:
 
 1. Start the MCP server in one terminal:
 ```bash
 cargo run
 ```
 
-2. In another terminal, use tools like `echo` to send JSON-RPC requests:
+2. In another terminal, use tools like `echo` to send JSON-RPC requests via standard input:
 ```bash
 # List available tools
-echo '{"jsonrpc": "2.0", "method": "list_tools", "id": "1"}' | nc -U /tmp/mcp.sock
+echo '{"jsonrpc": "2.0", "method": "list_tools", "id": "1"}' | cargo run
 
 # Call the tavily-search tool
-echo '{"jsonrpc": "2.0", "method": "call_tool", "id": "2", "params": {"name": "tavily-search", "arguments": {"query": "What is Rust programming language?"}}}' | nc -U /tmp/mcp.sock
+echo '{"jsonrpc": "2.0", "method": "call_tool", "id": "2", "params": {"name": "tavily-search", "arguments": {"query": "What is Rust programming language?"}}}' | cargo run
+```
+
+Alternatively, you can create a simple file with your request and pipe it to the server:
+```bash
+# Create a request file
+cat > request.json << EOF
+{"jsonrpc": "2.0", "method": "list_tools", "id": "1"}
+EOF
+
+# Send the request to the server
+cat request.json | cargo run
 ```
 
 ### 3. Creating a Python Test Client
